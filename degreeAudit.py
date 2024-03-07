@@ -38,7 +38,7 @@ class AuditScraper:
 
     
 
-driver = webdriver.Firefox(executable_path=r'geckodriver.exe')
+driver = webdriver.Firefox(executable_path=r'/firefox_drivers/geckodriver.exe')
 driver.get("https://appl020tm.lsu.edu/stu/degreeaudit.nsf/Introduction?openForm")
 scraper = AuditScraper(driver)
 ready = "maybe"
