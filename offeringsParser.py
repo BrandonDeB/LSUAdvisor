@@ -73,13 +73,12 @@ def get_courses_by_dept_num(semester, dept: str, num: str):
     return matching
 
 
-def generate_id_xml():
-    names = get_department_names()
-    get_department_ids('Spring 2024', names)
+names = get_department_names()
+get_department_ids('Spring 2024', names)
 
-    xml = "<Departments>\n" + dict2xml(course_id_dict) + "</Departments>"
+xml = "<Departments>\n" + dict2xml(course_id_dict) + "</Departments>"
 
-    f = open("dictionary.xml", "w")
-    f.write(xml)
-    f.close()
+f = open("dictionary.xml", "w")
+f.write(xml)
+f.close()
 
