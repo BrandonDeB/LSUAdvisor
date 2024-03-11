@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from dict2xml import dict2xml
 import re
+import xml.etree.cElementTree as ET
 
 base_url = 'https://appl101.lsu.edu/booklet2.nsf/f5e6e50d1d1d05c4862584410071cd2e?CreateDocument'
 params = {"%%Surrogate_SemesterDesc":"1",
@@ -41,25 +42,44 @@ def retreive_html(semester, department):
 
     response = requests.post(base_url, params, headers=headers, verify='appl101-lsu-edu-chain.pem')
     soup = BeautifulSoup(response.content, 'html.parser')
-    return soup.text
+    return soup.text.strip()
 
-def get_department_ids(names):
-    for name in names[:10]:
-        html = retreive_html('Spring 2024', name)
-        html = html.strip()
+def get_department_ids(semester, names):
+    for name in names:
+        html = retreive_html(semester, name)
         broken_up = html.splitlines()
         if html.find('There are no courses found for this Semester') == -1:
             line = broken_up[5]
             abbr = line[11:15]
             abbr = abbr.strip()
-            course_id_dict[re.sub('[^a-zA-Z_ ]', '', name)]=abbr
+            course_id_dict[abbr]=name
 
-names = get_department_names()
-get_department_ids(names)
+def get_matching_dept(abbr):
+    tree = ET.parse("dictionary.xml")
 
-xml = dict2xml(course_id_dict)
+    element = tree.find(abbr)
+    print(element.text)
+    return element.text
 
-f = open("dictionary.xml", "w")
-f.write(xml)
-f.close()
+
+def get_courses_by_dept_num(semester, dept: str, num: str):
+    html = retreive_html(semester, get_matching_dept(dept))
+    broken_up = html.splitlines()
+    matching = []
+    for line in broken_up[3:]:
+        if line.find(num) != -1:
+            matching.append(line)
+
+    return matching
+
+
+def generate_id_xml():
+    names = get_department_names()
+    get_department_ids('Spring 2024', names)
+
+    xml = "<Departments>\n" + dict2xml(course_id_dict) + "</Departments>"
+
+    f = open("dictionary.xml", "w")
+    f.write(xml)
+    f.close()
 
