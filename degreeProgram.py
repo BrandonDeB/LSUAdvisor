@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.cElementTree as ET
+import majorSearch
 
 
 class SemesterRecs():
@@ -19,29 +20,25 @@ class DegreeProgram():
 
 
 def open_major(major: str):
-    tree = ET.parse("majors.xml")
-    root = tree.getroot()
-    link = ''
-    for degree in root:
-        name = degree.find('Name').text.strip()
-        if name == major:
-            print('found')
-            link = degree.find('Link').text
-            break
-    link = link.replace('&amp;', '&').strip()
+    link = majorSearch.get_major_link(major)
     response = requests.get(link)
     major_html = response.text
     return major_html
 
-def read_major(html):
+# prints all the concentrations in the Major
+def read_major(html, conc: str):
     parsed_html = BeautifulSoup(html, features="html.parser")
     concentrations = parsed_html.body.find_all('h3')
+    full = " "
     for concentration in concentrations:
-        print(concentration.text)
+        if concentration.text == conc:
+            full += "CONCENTRATION: " + concentration.text + "\n"
+            for string in concentration.parent.nextSibling.strings:
+                if len(string) > 1:
+                    full += string + "\n"
+    return full
 
-
-
-read_major(open_major('Agricultural & Extension Education, B.S'))
+# read_major(open_major('Agricultural & Extension Education, B.S'), "Agricultural Leadership and Development")
 
     
 

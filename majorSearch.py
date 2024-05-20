@@ -40,7 +40,7 @@ def get_all_major_links():
 
 def get_major_link(major: str):
     bs = BeautifulSoup(major_listings, features="html.parser")
-    element = bs.find("a", text=re.compile(major))
+    element = bs.find("a", string=re.compile(major))
     return 'https://catalog.lsu.edu/' + element['href']
         
 print(get_major_link('Agricultural & Extension Education, B.S'))

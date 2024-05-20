@@ -73,12 +73,14 @@ def get_courses_by_dept_num(semester, dept: str, num: str):
     return matching
 
 
-names = get_department_names()
-get_department_ids('Spring 2024', names)
+# names = get_department_names()
+# get_department_ids('Fall 2024', names)
 
-xml = "<Departments>\n" + dict2xml(course_id_dict) + "</Departments>"
+# xml = "<Departments>\n" + dict2xml(course_id_dict) + "</Departments>"
 
-f = open("dictionary.xml", "w")
-f.write(xml)
-f.close()
+# f = open("dictionary.xml", "w")
+# f.write(xml)
+# f.close()
+
+print(get_courses_by_dept_num('Fall 2024', 'CSC', '1350'))
 
